@@ -11,76 +11,44 @@
         label="软件目录"
         prop="modulePath"
       >
-        <div class="modulePath">
-          <Input
-            type="text"
-            v-model="formItem.modulePath"
-            placeholder="Mac(/D/test/)   Windows(C:\Users\DSHui\Desktop\)"
-            clearable
-          />
-        
-          <Button
-            class="modulePath-button"
-            type="info"
-            @click="openFileHandler"
-          >选择目录</Button>
-        </div>
+        <Input
+          type="text"
+          v-model="formItem.modulePath"
+          clearable
+        />
+        <Button
+          type="info"
+          @click="openFileHandler"
+        >选择目录</Button>
       </FormItem>
       <FormItem
         label="启动文件路径"
-        prop="modulePath"
+        prop="startPathFile"
       >
-        <div class="modulePath">
-          <Input
-            type="text"
-            v-model="formItem.modulePath"
-            placeholder="Mac(/D/test/)   Windows(C:\Users\DSHui\Desktop\)"
-            clearable
-          />
-          <Button
-            class="modulePath-button"
-            type="info"
-            @click="showModalHandler"
-          >选择文件</Button>
-        </div>
+        <Input
+          type="text"
+          v-model="formItem.startPathFile"
+          clearable
+        />
+        <Button
+          type="info"
+          @click="showModalHandler"
+        >选择文件</Button>
       </FormItem>
       <FormItem
         label="配置文件路径"
         prop="modulePath"
       >
-        <div class="modulePath">
-          <Input
-            type="text"
-            v-model="formItem.modulePath"
-            placeholder="C:\Users\15639\Desktop\WindowsNoEditor\XR\Content\External"
-            clearable
-          />
-          <Button
-            class="modulePath-button"
-            type="info"
-            @click="showModalHandler"
-          >选择文件</Button>
-        </div>
-      </FormItem>
-     
-      <FormItem
-        label="生成文件路径(path)"
-        prop="path"
-        v-if="isCreateFile"
-      >
-        <!-- <module-input></module-input> -->
         <Input
           type="text"
-          v-model="formItem.path"
-          placeholder="Mac(/D/test/)   Windows(C:\\Users\\DSHui\\Desktop\\)"
+          v-model="formItem.modulePath"
           clearable
         />
+        <Button
+          type="info"
+          @click="showModalHandler"
+        >选择文件</Button>
       </FormItem>
-      <!-- <template v-if="isNextPath">
-        <FormItem label="精确下级路径" prop="nextPath" class="next-item">
-          <module-input v-model="formItem.nextPath" :firstPlaceholder="'文件名的正则匹配'" :lastPlaceholder="'下级路径'"></module-input>
-        </FormItem>
-      </template> -->
 
     </Form>
     <div class="home-btn">
@@ -88,6 +56,10 @@
         type="primary"
         @click="createClassFile('formItem')"
       >保存</Button>
+      <Button
+        type="primary"
+        @click="openProduct('formItem')"
+      >打开</Button>
       <Button
         style="margin-left: 10px"
         @click="resetForm('formItem')"
@@ -99,16 +71,6 @@
 import fs from "fs";
 import qs from "querystring";
 import path from "path";
-import ModuleInput from "../component/moduleInput";
-
-// 数据库信息默认组件
-import SqlDefault from "../component/sqlDefault";
-
-// 文件内容替换
-import FileReplace from "../component/replaceContent";
-
-// 下级目录
-import NextPath from "../component/nextPath";
 import { resolve } from "url";
 
 let plat = "";
@@ -145,6 +107,7 @@ export default {
       formItem: {
         modulePath: "",
         modulePathFile: "",
+        startPathFile: "C:\\Users\\Administrator\\Desktop\\云骑士装机大师.exe",
         host: "",
         port: "",
         database: "",
@@ -162,6 +125,9 @@ export default {
       },
       formValidate: {
         modulePath: [{ required: true, validator: pathReg, trigger: "blur" }],
+        startPathFile: [
+          { required: true, validator: pathReg, trigger: "blur" },
+        ],
         modulePathFile: [
           {
             required: true,
@@ -333,7 +299,7 @@ export default {
         },
         function (a, b) {
           console.log(a, b);
-          self.formItem.modulePathFile = a[0];
+          self.formItem.modulePath = a[0];
         }
       );
       console.log(dialog.showOpenDialog);
@@ -343,7 +309,16 @@ export default {
       let self = this;
       dialog.showOpenDialog(function (a, b) {
         console.log(a, b);
-        self.formItem.modulePathFile = a[0];
+        self.formItem.startPathFile = a[0];
+      });
+    },
+    openProduct() {
+      var cp = require("child_process"); //子进程
+      var path = ""; //第三方根目录
+      cp.exec(this.formItem.startPathFile, function (error, stdout, stderr) {
+        console.log("error", error);
+        console.log("stdout", stdout);
+        console.log("stderr", stderr);
       });
     },
     // 创建模版文件并替换
@@ -745,17 +720,13 @@ export default {
       // console.log(this.formItem)
     },
   },
-  components: {
-    ModuleInput,
-    SqlDefault,
-    FileReplace,
-    NextPath,
-  },
 };
 </script>
 <style lang="less">
 .home {
   padding: 3% 12%;
+  max-width: 1000px;
+  margin: 0 auto;
   &-btn {
     text-align: center;
   }
@@ -767,9 +738,9 @@ export default {
 .clickStyle {
   font-size: 14px;
 }
-.modulePath {
+.ivu-form-item-content {
   display: flex;
-  &-button {
+  & button {
     margin-left: 10px;
   }
 }
