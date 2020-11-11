@@ -13,7 +13,7 @@
       >
         <Input
           type="text"
-          v-model="formItem.modulePath"
+          v-model="formItem.bimPath"
           clearable
         />
         <Button
@@ -49,8 +49,32 @@
           @click="showModalHandler"
         >选择文件</Button>
       </FormItem>
-
+     
+    
     </Form>
+         <p>{{updateText}}</p>
+          <Progress
+        :percent="percent"
+        :stroke-width="20"
+        text-inside
+        hide-info
+      />
+      <!-- <Circle
+        :size="250"
+        :trail-width="4"
+        :stroke-width="5"
+        :percent="percent"
+        stroke-linecap="square"
+        stroke-color="#43a3fb">
+        <div class="demo-Circle-custom">
+            <h1>42,001,776</h1>
+            <p>{{updateText}}</p>
+            <span>
+                进度
+                <i>{{percent}}%</i>
+            </span>
+        </div>
+    </Circle> -->
     <div class="home-btn">
       <Button
         type="primary"
@@ -72,7 +96,8 @@ import fs from "fs";
 import qs from "querystring";
 import path from "path";
 import { resolve } from "url";
-
+import { getMd5, getDiffData, getData,downloadFile } from "../utils/diffMd5";
+import confJson from "../../../static/conf.json";
 let plat = "";
 export default {
   name: "home-page",
@@ -105,6 +130,7 @@ export default {
 
     return {
       formItem: {
+        bimPath:"",
         modulePath: "",
         modulePathFile: "",
         startPathFile: "C:\\Users\\Administrator\\Desktop\\云骑士装机大师.exe",
@@ -172,6 +198,7 @@ export default {
         path: [{ required: true, validator: pathReg, trigger: "blur" }],
         nextPath: [{ required: true, validator: pathRule, trigger: "blur" }],
       },
+      updateText:"",
       moduleList: [
         { title: "普通", code: 1 },
         { title: "表单", code: 2 },
@@ -179,10 +206,19 @@ export default {
         { title: "SKU", code: 8 },
       ],
       moduleNameList: [],
+      progress: 0,
+      size: 0,
       moduleType: 1,
       specialContent: "", // 特殊替换内容
       baseUrl: "https://cs.mclon.com",
     };
+  },
+  computed: {
+    percent() {
+      if (this.progress == 0) return 0;
+      console.log(this.progress,this.size)
+      return (Math.round(this.progress / this.size * 10000) / 100)
+    },
   },
   mounted() {
     plat = process.platform;
@@ -277,7 +313,7 @@ export default {
       // }
 
       // this.saveHistoryData();
-      // D:\update\fileTool\
+      // D:\update\BIMLauncher\
       let pathUrl = path.resolve(__dirname, modulePath + "test.js");
       fs.unlink(pathUrl, (err) => {
         console.log("删除完成");
@@ -293,13 +329,15 @@ export default {
       // shell.showItemInFolder("D:CloudMusic");
       const { dialog } = require("electron").remote;
       let self = this;
+
       dialog.showOpenDialog(
         {
           properties: ["openFile", "openDirectory"],
         },
         function (a, b) {
-          console.log(a, b);
-          self.formItem.modulePath = a[0];
+          self.formItem.bimPath = a[0];
+          console.log(a,  self.formItem.bimPath);
+
         }
       );
       console.log(dialog.showOpenDialog);
@@ -312,14 +350,50 @@ export default {
         self.formItem.startPathFile = a[0];
       });
     },
-    openProduct() {
-      var cp = require("child_process"); //子进程
-      var path = ""; //第三方根目录
-      cp.exec(this.formItem.startPathFile, function (error, stdout, stderr) {
-        console.log("error", error);
-        console.log("stdout", stdout);
-        console.log("stderr", stderr);
+    async openProduct() {
+      // var s= await getMd5(this.formItem.startPathFile)
+      // console.log(s)
+      var start = new Date().getTime();
+      const self = this;
+            this.updateText="检查更新文件...."
+      const { size, updateData } = await getDiffData(confJson,this.formItem.bimPath);
+
+      this.size = size;
+      // getData(updateData)
+      updateData.map((item) => {
+        downloadFile({
+          remoteFile: item.url,
+          name: item.name,
+          size: item.size,
+          localFile: `${self.formItem.bimPath}${item.pathWithName}`,
+        }).then((itemSize) => {
+          self.progress += itemSize;
+          self.updateText="开始更新"
+             console.log(
+                    (new Date().getTime() - start) / 1000.0 +
+                    "秒" );
+        });
       });
+      console.log(
+        "比对md5耗时:" +
+          (new Date().getTime() - start) / 1000.0 +
+          "秒，预计更新" +
+          updateData.length +
+          "个文件"
+      );
+            this.updateText=
+        "比对md5耗时:" +
+          (new Date().getTime() - start) / 1000.0 +
+          "秒，预计更新" +
+          updateData.length +
+          "个文件"
+      // var cp = require("child_process"); //子进程
+      // var path = ""; //第三方根目录
+      // cp.exec(this.formItem.startPathFile, function (error, stdout, stderr) {
+      //   console.log("error", error);
+      //   console.log("stdout", stdout);
+      //   console.log("stderr", stderr);
+      // });
     },
     // 创建模版文件并替换
     createModuleFile() {
@@ -723,6 +797,38 @@ export default {
 };
 </script>
 <style lang="less">
+    .demo-Circle-custom{
+        & h1{
+            color: #3f414d;
+            font-size: 28px;
+            font-weight: normal;
+        }
+        & p{
+            color: #657180;
+            font-size: 14px;
+            margin: 10px 0 15px;
+        }
+        & span{
+            display: block;
+            padding-top: 15px;
+            color: #657180;
+            font-size: 14px;
+            &:before{
+                content: '';
+                display: block;
+                width: 50px;
+                height: 1px;
+                margin: 0 auto;
+                background: #e0e3e6;
+                position: relative;
+                top: -15px;
+            };
+        }
+        & span i{
+            font-style: normal;
+            color: #3f414d;
+        }
+    }
 .home {
   padding: 3% 12%;
   max-width: 1000px;
@@ -747,5 +853,8 @@ export default {
 .nextPath {
   display: flex;
   justify-content: space-between;
+}
+.home-btn{
+  margin-top: 26px;
 }
 </style>

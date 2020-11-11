@@ -1,5 +1,5 @@
 {
-  "name": "file_tool",
+  "name": "BIMLauncher",
   "version": "1.0.10",
   "author": "zxy <136297793@qq.com>",
   "description": "An electron-vue project",
@@ -18,7 +18,7 @@
   },
   "build": {
     "asar": false,
-    "productName": "fileTool",
+    "productName": "BIMLauncher",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
@@ -59,10 +59,11 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bagpipe": "^0.3.5",
     "electron-updater": "^4.1.2",
-    "view-design": "^4.0.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "view-design": "^4.0.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",

@@ -49,7 +49,7 @@
 <script>
 import UpdateModal from "./component/updateModal";
 export default {
-  name: "file_tool",
+  name: "BIMLauncher",
   data() {
     return {
       showUpdater: false,
