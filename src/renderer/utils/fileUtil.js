@@ -67,13 +67,22 @@ export async function getDiffData(confArr, bimPath) {
     for (let i = 0; i < confArr.length; i++) {
         let confItem = confArr[i]
         let path = `${bimPath}${confItem.pathWithName}`
-        console.log(path)
-        let md5 = await getMd5(path)
-        // console.log(md5)
-        if (confItem.md5 != md5.toLowerCase()) {
+        // console.log(path)
+        // // 验证模版文件位置是否正确
+        if (!fs.existsSync(path)) {
             size += confItem.size;
             updateData.push(confItem)
+            console.log(path, "----1111111")
+        } else {
+            console.log(path, "----22222222")
+            let md5 = await getMd5(path)
+            // console.log(md5)
+            if (confItem.md5 != md5.toLowerCase()) {
+                size += confItem.size;
+                updateData.push(confItem)
+            }
         }
+
     }
 
     console.log(updateData)

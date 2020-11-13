@@ -1,6 +1,6 @@
 {
-  "name": "BIMLauncher",
-  "version": "1.0.10",
+  "name": "BIMLauncher22",
+  "version": "1.0.102",
   "author": "zxy <136297793@qq.com>",
   "description": "An electron-vue project",
   "license": "",
@@ -18,7 +18,7 @@
   },
   "build": {
     "asar": false,
-    "productName": "BIMLauncher",
+    "productName": "BIMLauncher333",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
