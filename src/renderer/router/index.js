@@ -8,7 +8,7 @@ export default new Router({
     {
       path: '/',
       name: 'home-page',
-      component: require('@/pages/Home').default
+      component: require('@/pages/Launcher').default
     },
     {
       path: '/setting',

@@ -96,7 +96,7 @@ import fs from "fs";
 import qs from "querystring";
 import path from "path";
 import { resolve } from "url";
-import { getMd5, getDiffData, getData,downloadFile } from "../utils/diffMd5";
+import { getMd5, getDiffData, getData,downloadFile } from "../utils/fileUtil";
 import confJson from "../../../static/conf.json";
 let plat = "";
 export default {
