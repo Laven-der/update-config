@@ -191,6 +191,9 @@ export default {
     async showModalHandler() {
       this.formItem.startPathFile = await openFileHandler()
     },
+    onProgress(itemSize){
+       this.progress = itemSize;
+    },
     async openProduct() {
       // var s= await getMd5(this.formItem.startPathFile)
       // console.log(s)
@@ -207,8 +210,9 @@ export default {
           name: item.name,
           size: item.size,
           localFile: `${self.formItem.bimPath}${item.pathWithName}`,
+          onProgress:self.onProgress
         }).then((itemSize) => {
-          self.progress += itemSize;
+          // self.progress = itemSize;
           self.updateText="开始更新"
              console.log(
                     (new Date().getTime() - start) / 1000.0 +

@@ -7880,7 +7880,7 @@
         "url": "https://ali-res.dabanjia.com/updatePackages/bim/client/3.4.0/XR/Plugins/XRStaticLighting/Binaries/Win64/UE4.modules"
     },
     {
-        "md5": "12ad9c091b33b34e04d8155f68bc9aa0",
+        "md5": "12ad9c091b33b234e04d8155f68bc9aa0",
         "name": "UE4-WindowsFileUtility.dll",
         "path": "/XR/Plugins/ZipUtility/Binaries/Win64",
         "pathWithName": "/XR/Plugins/ZipUtility/Binaries/Win64/UE4-WindowsFileUtility.dll",
